@@ -1,7 +1,6 @@
-﻿using UnityEngine;
-using System.Collections;
+using UnityEngine;
 using System.Collections.Generic;
-using System.IO;
+using System;
 using System.Xml;
 using System.Text.RegularExpressions;
 
@@ -20,41 +19,31 @@ public class ResourceManager : MonoBehaviour {
 
 		strings = new Dictionary<string, string>();
 
-		LoadStringFile(GetISOCodeFromSystemLanguage());
+		LoadStrings(null); // Load default language strings
+		LoadStrings(GetISOCodeFromSystemLanguage()); // Override system language existing strings
 	}
 
-	protected void LoadStringFile(string lang){
-		strings.Clear();
+	protected bool LoadStrings(string lang){
+		TextAsset stringsFileAsset = Resources.Load<TextAsset>("strings" + (String.IsNullOrEmpty(lang) ? "" : ("-" + lang)));
 
-		// Load current language xml file
-		TextAsset stringsFileAsset = Resources.Load<TextAsset>("strings-" + lang);
-
-		// If not exists, and language has region code, try to load without region code
-		if (stringsFileAsset == null && lang.Contains("_")){
-			stringsFileAsset = Resources.Load<TextAsset>("strings-" + Regex.Replace(lang, "_.*", ""));
-		}
-
-		// If not exists, load default strings file
-		if (stringsFileAsset == null) {
-			stringsFileAsset = Resources.Load<TextAsset>("strings");
-		}
-
-		if (stringsFileAsset == null){
-			Debug.LogError("Cannot load strings file");
-		}
-		else{
+		if (stringsFileAsset != null){
 			XmlDocument xmlStringsDoc = new XmlDocument();
 			xmlStringsDoc.LoadXml(stringsFileAsset.text);
 
 			foreach(XmlNode xmlNode in xmlStringsDoc.DocumentElement.ChildNodes){
 				strings[xmlNode.Attributes["name"].Value] = xmlNode.InnerText;
 			}
+			
+			return true;
 		}
+		
+		return false;
 	}
 
 	public static string GetString(string key){
-		if (instance.strings.ContainsKey(key)){
-			return ConvertPlaceHolders(instance.strings[key]);
+		string str;
+		if (instance.strings.TryGetValue(key, out str)){
+			return ConvertPlaceHolders(str);
 		}
 
 		Debug.LogError("Strings array doesn't contain the key: " + key);
@@ -94,7 +83,7 @@ public class ResourceManager : MonoBehaviour {
 			case SystemLanguage.Belarusian: res = "by"; break;
 			case SystemLanguage.Bulgarian: res = "bg"; break;
 			case SystemLanguage.Catalan: res = "ca"; break;
-			case SystemLanguage.Chinese: res = "zh"; break;
+			case SystemLanguage.Chinese: res = "zh_CN"; break;
 			case SystemLanguage.ChineseSimplified: res = "zh_CN"; break;
 			case SystemLanguage.ChineseTraditional: res = "zh_TW"; break;
 			case SystemLanguage.Czech: res = "cs"; break;
