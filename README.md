@@ -7,4 +7,4 @@ Strings management for Unity using Android format
   * Default language file should be named `strings.xml`. 
   * Language specific files should be named `strings-iso_language_code.xml`. 
 * Add this script to a GameObject in your scene
-* In your code, call `ResourceManager.instance.GetString` method to get your localized resource.
+* In your code, call `ResourceManager.GetString` method to get your localized resource.
