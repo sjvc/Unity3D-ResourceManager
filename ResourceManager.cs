@@ -23,7 +23,7 @@ public class ResourceManager : MonoBehaviour {
 		LoadStrings(GetISOCodeFromSystemLanguage()); // Override system language existing strings
 	}
 
-	protected bool LoadStrings(string lang){
+	protected void LoadStrings(string lang){
 		TextAsset stringsFileAsset = Resources.Load<TextAsset>("strings" + (String.IsNullOrEmpty(lang) ? "" : ("-" + lang)));
 
 		if (stringsFileAsset != null){
@@ -31,13 +31,9 @@ public class ResourceManager : MonoBehaviour {
 			xmlStringsDoc.LoadXml(stringsFileAsset.text);
 
 			foreach(XmlNode xmlNode in xmlStringsDoc.DocumentElement.ChildNodes){
-				strings[xmlNode.Attributes["name"].Value] = xmlNode.InnerText;
+				strings[xmlNode.Attributes["name"].Value] = Regex.Unescape(xmlNode.InnerText);
 			}
-			
-			return true;
 		}
-		
-		return false;
 	}
 
 	public static string GetString(string key){
