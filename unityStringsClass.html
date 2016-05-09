@@ -1,0 +1,44 @@
+<html>
+
+<head>
+
+	<script>
+		String.prototype.camelize = function () {
+       		return this.replace (/(?:[-_])(\w)/g, function (_, c) {
+      			return c ? c.toUpperCase () : '';
+    		})
+  		};
+
+		var handleFiles = function(files){
+			if (files.length != 1) return;
+
+			var reader = new FileReader();
+			reader.onload = function(e){
+
+				var tab = "&nbsp;&nbsp;&nbsp;&nbsp;";
+				var code = document.getElementsByTagName("body")[0];
+				var parser = new DOMParser();
+				var xmlDoc = parser.parseFromString(reader.result, "text/xml");
+				var strings = xmlDoc.getElementsByTagName("string");
+
+				code.innerHTML = "using UnityEngine;<br />using System.Collections;<br /><br />public static class Strings {<br /><br />";
+				for(var i=0; i<strings.length; i++){
+					code.innerHTML += tab + "public static string " + strings[i].getAttribute("name").camelize() + " = " + "\"" + strings[i].getAttribute("name") + "\"" + ";<br/>";
+				}	
+				code.innerHTML += "<br />}"			
+			};
+
+			reader.readAsText(files[0]);
+		}
+	</script>
+
+</head>
+
+<body>
+
+	Open your strings.xml file <br /><br />
+	<input type="file" onchange="handleFiles(this.files)" />
+
+</body>
+
+</html>
