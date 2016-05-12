@@ -21,7 +21,7 @@
 				var xmlDoc = parser.parseFromString(reader.result, "text/xml");
 				var strings = xmlDoc.getElementsByTagName("string");
 
-				code.innerHTML = "using UnityEngine;<br />using System.Collections;<br /><br />public static class Strings {<br /><br />";
+				code.innerHTML = "public static class Strings {<br /><br />";
 				for(var i=0; i<strings.length; i++){
 					code.innerHTML += tab + "public static string " + strings[i].getAttribute("name").camelize() + " = " + "\"" + strings[i].getAttribute("name") + "\"" + ";<br/>";
 				}	
