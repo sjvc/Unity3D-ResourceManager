@@ -12,13 +12,15 @@ public class ResMgrStringsGenerator : AssetPostprocessor {
 
 	static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths){
 		foreach (string asset in importedAssets){
-			if (Regex.IsMatch(asset, STRINGS_XML_PATH_REGEXP) && UpdateStringsCsFile()){
-				Debug.Log(STRINGS_CS_PATH + " file updated");
+			if (Regex.IsMatch(asset, STRINGS_XML_PATH_REGEXP)){
+				UpdateStringsCsFile();
+				return;
 			}
 		}
 	}
 
-	private static bool UpdateStringsCsFile(){
+	[MenuItem("Assets/Generate Strings.cs file", false, 10000)]
+	public static void UpdateStringsCsFile(){
 		TextAsset stringsFileAsset = Resources.Load<TextAsset>("strings");
 
 		if (stringsFileAsset != null){
@@ -37,10 +39,8 @@ public class ResMgrStringsGenerator : AssetPostprocessor {
 
 			File.WriteAllText( Path.Combine(Application.dataPath, STRINGS_CS_PATH), fileContents );
 
-			return true;
+			Debug.Log(STRINGS_CS_PATH + " file updated");
 		}
-
-		return false;
 	}
 
 	private static string Camelize(string str){
