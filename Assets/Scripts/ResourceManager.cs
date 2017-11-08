@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 **/
 
 public class ResourceManager : MonoBehaviour {
+	public string debugIsoCode = "";
 
 	[HideInInspector]
 	public static StringResourceManager stringResources;
@@ -19,7 +20,7 @@ public class ResourceManager : MonoBehaviour {
 		stringResources = new StringResourceManager();
 
 		stringResources.LoadStrings(null); // Load default language strings
-		stringResources.LoadStrings(StringResourceManager.GetISOCodeFromSystemLanguage()); // Override system language existing strings
+		stringResources.LoadStrings(Debug.isDebugBuild && !String.IsNullOrEmpty(debugIsoCode) ? debugIsoCode : StringResourceManager.GetISOCodeFromSystemLanguage()); // Override system language existing strings
 	}
 
 	public static string[] GetStringKeys(){
