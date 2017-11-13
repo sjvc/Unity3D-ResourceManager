@@ -19,8 +19,9 @@ public class ResourceManager : MonoBehaviour {
 	void Awake(){
 		stringResources = new StringResourceManager();
 
+		string isoCode = Debug.isDebugBuild && !String.IsNullOrEmpty(debugIsoCode) ? debugIsoCode : StringResourceManager.GetISOCodeFromSystemLanguage();
 		stringResources.LoadStrings(null); // Load default language strings
-		stringResources.LoadStrings(Debug.isDebugBuild && !String.IsNullOrEmpty(debugIsoCode) ? debugIsoCode : StringResourceManager.GetISOCodeFromSystemLanguage()); // Override system language existing strings
+		stringResources.LoadStrings(isoCode); // Override system language existing strings
 	}
 
 	public static string[] GetStringKeys(){
@@ -65,7 +66,7 @@ public class StringResourceManager {
 		}
 	}
 
-	public void LoadStrings(string langIsoCode){
+	public bool LoadStrings(string langIsoCode){
 		TextAsset stringsFileAsset = Resources.Load<TextAsset>(string.Format("strings{0}", String.IsNullOrEmpty(langIsoCode) ? "" : string.Format("-{0}", langIsoCode)));
 
 		if (stringsFileAsset != null){
@@ -78,7 +79,15 @@ public class StringResourceManager {
 				strings[xmlNode.Attributes["name"].Value] = Regex.Unescape(xmlNode.InnerText);
 				stringKeys[i] = xmlNode.Attributes["name"].Value;
 			}
+
+			return true;
 		}
+
+		if (langIsoCode.Contains("-")){
+			return LoadStrings(langIsoCode.Substring(0, langIsoCode.LastIndexOf("-")));
+		}
+
+		return false;
 	}
 
 	public void ClearStrings(){
@@ -161,9 +170,9 @@ public class StringResourceManager {
 			case SystemLanguage.Belarusian: code = "by"; break;
 			case SystemLanguage.Bulgarian: code = "bg"; break;
 			case SystemLanguage.Catalan: code = "ca"; break;
-			case SystemLanguage.Chinese: code = "zh_CN"; break;
-			case SystemLanguage.ChineseSimplified: code = "zh_CN"; break;
-			case SystemLanguage.ChineseTraditional: code = "zh_TW"; break;
+			case SystemLanguage.Chinese: code = "zh"; break;
+			case SystemLanguage.ChineseSimplified: code = "zh"; break;
+			case SystemLanguage.ChineseTraditional: code = "zh-rTW"; break;
 			case SystemLanguage.Czech: code = "cs"; break;
 			case SystemLanguage.Danish: code = "da"; break;
 			case SystemLanguage.Dutch: code = "nl"; break;
