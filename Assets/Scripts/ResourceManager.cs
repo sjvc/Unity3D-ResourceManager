@@ -67,7 +67,7 @@ public class StringResourceManager {
 	}
 
 	public bool LoadStrings(string langIsoCode){
-		TextAsset stringsFileAsset = Resources.Load<TextAsset>(string.Format("strings{0}", String.IsNullOrEmpty(langIsoCode) ? "" : string.Format("-{0}", langIsoCode)));
+		TextAsset stringsFileAsset = Resources.Load<TextAsset>(string.Format("Strings/strings{0}", String.IsNullOrEmpty(langIsoCode) ? "" : string.Format("-{0}", langIsoCode)));
 
 		if (stringsFileAsset != null){
 			XmlDocument xmlStringsDoc = new XmlDocument();
@@ -147,7 +147,7 @@ public class StringResourceManager {
 		for (int i=0, size=allLanguages.Length; i<size; i++){
 			string langIsoCode = GetISOCodeFromLanguage( (SystemLanguage)allLanguages.GetValue(i) );
 			if (!providedIsoCodes.Contains(langIsoCode)){ // Avoid duplicate entries
-				TextAsset stringsFileAsset = Resources.Load<TextAsset>(string.Format("strings-{0}", langIsoCode));
+				TextAsset stringsFileAsset = Resources.Load<TextAsset>(string.Format("Strings/strings-{0}", langIsoCode));
 				if (stringsFileAsset != null){
 					providedIsoCodes.Add( langIsoCode );
 				}
