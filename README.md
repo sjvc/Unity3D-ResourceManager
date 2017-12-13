@@ -10,7 +10,7 @@ Strings management for Unity using Android format
 * In your code, call `ResourceManager.GetString(Strings.yourStringKey)` to get your localized resource.
 
 ## Composites
-String concatenation generates garbage. In order to avoid it, instead of concatenate strings at runtime, you can create them on a file called composites.xml in [Resources](http://wiki.unity3d.com/index.php/Special_Folder_Names_in_your_Assets_Folder#.22Resources.22)/Strings folder, using {{key}} to refer to an existing string key. So it can be used as a string resource.
+String concatenation generates garbage. In order to avoid it, instead of concatenate strings at runtime, you can create them on a file called composites.xml in [Resources](http://wiki.unity3d.com/index.php/Special_Folder_Names_in_your_Assets_Folder#.22Resources.22)/Strings folder, using {{key}} to refer to an existing string key. So they can be used as any other string resource.
 
 For example, if you have this `strings.xml` file:
 ```
