@@ -66,7 +66,7 @@ public class StringResourceManager {
 		}
 	}
 
-	public bool LoadStrings(string langIsoCode){
+	public bool LoadStrings(string langIsoCode, bool loadComposites = true){
 		TextAsset stringsFileAsset = Resources.Load<TextAsset>(string.Format("Strings/strings{0}", String.IsNullOrEmpty(langIsoCode) ? "" : string.Format("-{0}", langIsoCode)));
 
 		if (stringsFileAsset != null){
@@ -80,7 +80,9 @@ public class StringResourceManager {
 				stringKeys[i] = xmlNode.Attributes["name"].Value;
 			}
 
-			LoadComposites();
+			if (loadComposites){
+				LoadComposites();
+			}
 
 			return true;
 		}
@@ -99,7 +101,6 @@ public class StringResourceManager {
 			XmlDocument xmlStringsDoc = new XmlDocument();
 			xmlStringsDoc.LoadXml(stringsFileAsset.text);
 
-			stringKeys = new string[xmlStringsDoc.DocumentElement.ChildNodes.Count];
 			for(int i=0, size=xmlStringsDoc.DocumentElement.ChildNodes.Count; i<size; i++){
 				XmlNode xmlNode = xmlStringsDoc.DocumentElement.ChildNodes[i];
 				string text = Regex.Unescape(xmlNode.InnerText);
