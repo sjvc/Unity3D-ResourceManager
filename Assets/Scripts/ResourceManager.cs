@@ -80,6 +80,8 @@ public class StringResourceManager {
 				stringKeys[i] = xmlNode.Attributes["name"].Value;
 			}
 
+			LoadComposites();
+
 			return true;
 		}
 
@@ -88,6 +90,22 @@ public class StringResourceManager {
 		}
 
 		return false;
+	}
+
+	private void LoadComposites(){
+		TextAsset stringsFileAsset = Resources.Load<TextAsset>(string.Format("Strings/composites"));
+
+		if (stringsFileAsset != null){
+			XmlDocument xmlStringsDoc = new XmlDocument();
+			xmlStringsDoc.LoadXml(stringsFileAsset.text);
+
+			stringKeys = new string[xmlStringsDoc.DocumentElement.ChildNodes.Count];
+			for(int i=0, size=xmlStringsDoc.DocumentElement.ChildNodes.Count; i<size; i++){
+				XmlNode xmlNode = xmlStringsDoc.DocumentElement.ChildNodes[i];
+				string text = Regex.Unescape(xmlNode.InnerText);
+				strings[xmlNode.Attributes["name"].Value] = Regex.Replace(text, @"{{[^}}]+}}", m => strings[m.Value.ToString().Replace("{{","").Replace("}}", "")] );
+			}
+		}
 	}
 
 	public void ClearStrings(){
