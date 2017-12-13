@@ -29,4 +29,4 @@ And this `composites.xml` file:
 </resources>
 ```
 
-Then `ResourceManager.GetString(Strings.helloHowAreYou)` *output will be: Hello. How are you?*
+Then, `ResourceManager.GetString(Strings.helloHowAreYou)` output will be: *Hello. How are you?*
