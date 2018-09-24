@@ -62,7 +62,7 @@ public class StringResourceManager {
 
 	public StringResourceManager(){
 		for (int i=0; i<placeHolderGroups.Length; i++){
-			placeHolderGroups[i] = string.Format("{{0}}", i);
+			placeHolderGroups[i] = string.Format("{{{0}}}", i);
 		}
 	}
 
