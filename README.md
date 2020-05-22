@@ -1,12 +1,12 @@
 # Unity3D-ResourceManager
-Strings management for Unity using Android format
+Strings locatization for Unity using Android format.
 
 # Usage
 * Place your xml string files using [Android syntax](http://developer.android.com/intl/es/guide/topics/resources/string-resource.html) in [Resources](http://wiki.unity3d.com/index.php/Special_Folder_Names_in_your_Assets_Folder#.22Resources.22)/Strings/values[-iso_code] folders. 
   * Default folder should be named `values`. 
   * Language specific folders should be named `values-iso_language_code`.
   * You can name the xml file as you wish
-  * You can have as many files as you want
+  * You can have as many xml files as you want in the same folder
   * You can use multiple Resource folders
 * Copy Assets folder in this repository to your project
 * Add ResouceManager.cs script to a GameObject in your scene
