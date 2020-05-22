@@ -5,8 +5,6 @@ using UnityEditor.SceneManagement;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Baviux {
-
 public class UsedGlyphs {
 	private static string defaultFontGlyphs = @"!""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬­®°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ–—‘’‚“”„†‡•…‰‹›€™";
 
@@ -110,6 +108,4 @@ public class UsedGlyphs {
 			usedGlyphsList.Add(c);
 		}
 	}
-}
-
 }

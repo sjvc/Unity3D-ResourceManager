@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System;
 using System.Text.RegularExpressions;
 
-namespace Baviux {
-
 public class StringResourceUtils {
 
 	[MenuItem("Utils/Check Missing Strings")]
@@ -57,7 +55,5 @@ public class StringResourceUtils {
 
 		return providedIsoCodes;
 	}
-
-}
 
 }

@@ -5,8 +5,6 @@ using System.IO;
 using System.Xml;
 using System.Text.RegularExpressions;
 
-namespace Baviux {
-
 /// <summary>
 /// For text resources, it expects Android xml values file format
 /// </summary>
@@ -178,6 +176,4 @@ public class StringResourceManager {
 
 		return code;
 	}
-}
-
 }

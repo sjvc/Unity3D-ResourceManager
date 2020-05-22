@@ -7,8 +7,6 @@ using System.Collections.Generic;
 	so strings are loaded as fast as possible
 **/
 
-namespace Baviux {
-
 public class ResourceManager : MonoBehaviour {
 	public string debugIsoCode = "";
 
@@ -42,6 +40,4 @@ public class ResourceManager : MonoBehaviour {
 	public static string GetString(string key, params object[] args){
 		return stringResources.GetString(key, args);
 	}
-}
-
 }

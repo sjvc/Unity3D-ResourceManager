@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 
-namespace Baviux {
-
 public class StringsAssetPostProcessor : AssetPostprocessor {
 	private const string STRINGS_XML_PATH_REGEXP = @"^Assets(/.*)*/Resources/Strings/values/.+\.xml$";
 	private const string COMPOSITES_XML_PATH_REGEXP = @"^Assets/Resources/Strings/composites\.xml$";
@@ -66,7 +64,5 @@ public class StringsAssetPostProcessor : AssetPostprocessor {
 
 		return result;
 	}
-
-}
 
 }
