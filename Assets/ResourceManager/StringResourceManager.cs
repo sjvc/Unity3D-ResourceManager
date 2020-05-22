@@ -5,49 +5,7 @@ using System.IO;
 using System.Xml;
 using System.Text.RegularExpressions;
 
-/**
-	IMPORTANT: Set this script to be executed before the default time (Script Execution Order)
-	so strings are loaded as fast as possible
-**/
-
-public class ResourceManager : MonoBehaviour {
-	public string debugIsoCode = "";
-
-	[HideInInspector]
-	public static StringResourceManager stringResources;
-
-	void Awake(){
-		stringResources = new StringResourceManager();
-
-		string isoCode = Debug.isDebugBuild && !String.IsNullOrEmpty(debugIsoCode) ? debugIsoCode : StringResourceManager.GetISOCodeFromSystemLanguage();
-		stringResources.LoadStrings(null); // Load default language strings
-		stringResources.LoadStrings(isoCode); // Override system language existing strings
-	}
-
-	public static string[] GetStringKeys(){
-		return stringResources.GetStringKeys();
-	}
-
-	public static string GetString(string key){
-		return stringResources.GetString(key);
-	}
-
-	public static string GetString(string key, object arg0){
-		return stringResources.GetString(key, arg0);
-	}
-
-	public static string GetString(string key, object arg0, object arg1){
-		return stringResources.GetString(key, arg0, arg1);
-	}
-
-	public static string GetString(string key, object arg0, object arg1, object arg2){
-		return stringResources.GetString(key, arg0, arg1, arg2);
-	}
-
-	public static string GetString(string key, params object[] args){
-		return stringResources.GetString(key, args);
-	}
-}
+namespace Baviux {
 
 /// <summary>
 /// For text resources, it expects Android xml values file format
@@ -57,8 +15,6 @@ public class StringResourceManager {
 	private static string[] placeHolderGroups = new string[20];
 	
 	private Dictionary<string, string> strings = new Dictionary<string, string>();
-	private string[] stringKeys;
-	private List<string> providedIsoCodes;
 
 	public StringResourceManager(){
 		for (int i=0; i<placeHolderGroups.Length; i++){
@@ -66,36 +22,46 @@ public class StringResourceManager {
 		}
 	}
 
-	public bool LoadStrings(string langIsoCode, bool loadComposites = true){
-		TextAsset stringsFileAsset = Resources.Load<TextAsset>(string.Format("Strings/strings{0}", String.IsNullOrEmpty(langIsoCode) ? "" : string.Format("-{0}", langIsoCode)));
+	public bool LoadStrings(string langIsoCode, bool loadAllFiles = true, bool loadComposites = true){
+		bool loaded = false;
+		TextAsset[] stringFileAssets;
+		string stringsFolder = string.Format("Strings/values{0}/", String.IsNullOrEmpty(langIsoCode) ? "" : string.Format("-{0}", langIsoCode));
 
-		if (stringsFileAsset != null){
-			XmlDocument xmlStringsDoc = new XmlDocument();
-			xmlStringsDoc.LoadXml(stringsFileAsset.text);
+		if (loadAllFiles){
+			stringFileAssets = Resources.LoadAll<TextAsset>(stringsFolder);
+		} else{
+			stringFileAssets = new TextAsset[]{
+				Resources.Load<TextAsset>(string.Format("{0}strings", stringsFolder))
+			};
+		}
+		
+		for (int r=0; r<stringFileAssets.Length; r++){ 
+			if (stringFileAssets[r] != null){
+				XmlDocument xmlStringsDoc = new XmlDocument();
+				xmlStringsDoc.LoadXml(stringFileAssets[r].text);
 
-			stringKeys = new string[xmlStringsDoc.DocumentElement.ChildNodes.Count];
-			for(int i=0, size=xmlStringsDoc.DocumentElement.ChildNodes.Count; i<size; i++){
-				XmlNode xmlNode = xmlStringsDoc.DocumentElement.ChildNodes[i];
-				strings[xmlNode.Attributes["name"].Value] = Regex.Unescape(xmlNode.InnerText);
-				stringKeys[i] = xmlNode.Attributes["name"].Value;
+				for(int i=0, size=xmlStringsDoc.DocumentElement.ChildNodes.Count; i<size; i++){
+					XmlNode xmlNode = xmlStringsDoc.DocumentElement.ChildNodes[i];
+					strings[xmlNode.Attributes["name"].Value] = Regex.Unescape(xmlNode.InnerText);
+				}
+
+				loaded = true;
 			}
-
-			if (loadComposites){
-				LoadComposites();
-			}
-
-			return true;
 		}
 
-		if (langIsoCode.Contains("-")){
-			return LoadStrings(langIsoCode.Substring(0, langIsoCode.LastIndexOf("-")));
+		if (loaded && loadComposites){
+			LoadComposites();
 		}
 
-		return false;
+		if (!loaded && langIsoCode != null && langIsoCode.Contains("-")){
+			return LoadStrings(langIsoCode.Substring(0, langIsoCode.LastIndexOf("-")), loadAllFiles, loadComposites);
+		}
+
+		return loaded;
 	}
 
 	private void LoadComposites(){
-		TextAsset stringsFileAsset = Resources.Load<TextAsset>(string.Format("Strings/composites"));
+		TextAsset stringsFileAsset = Resources.Load<TextAsset>("Strings/composites");
 
 		if (stringsFileAsset != null){
 			XmlDocument xmlStringsDoc = new XmlDocument();
@@ -111,11 +77,14 @@ public class StringResourceManager {
 
 	public void ClearStrings(){
 		strings.Clear();
-		stringKeys = null;
 	}
 
-	public string[] GetStringKeys(){
-		return stringKeys;
+	public void GetStringKeys(string[] keys){
+		strings.Keys.CopyTo(keys, 0);
+	}
+
+	public int GetStringCount(){
+		return strings.Keys.Count;
 	}
 
 	public bool ContainsString(string key){
@@ -153,27 +122,6 @@ public class StringResourceManager {
 	/// </summary>
 	private static string ConvertPlaceHolders(string str){
 		return placeHoldersRegEx.Replace(str, m => placeHolderGroups[ int.Parse(m.Groups[1].Value) - 1 ]);
-	}
-
-	public List<string> GetProvidedIsoCodes(){
-		if (providedIsoCodes != null){
-			return providedIsoCodes;
-		}
-
-		providedIsoCodes = new List<string>();
-		providedIsoCodes.Add(""); // Default language
-		Array allLanguages = Enum.GetValues(typeof(SystemLanguage));
-		for (int i=0, size=allLanguages.Length; i<size; i++){
-			string langIsoCode = GetISOCodeFromLanguage( (SystemLanguage)allLanguages.GetValue(i) );
-			if (!providedIsoCodes.Contains(langIsoCode)){ // Avoid duplicate entries
-				TextAsset stringsFileAsset = Resources.Load<TextAsset>(string.Format("Strings/strings-{0}", langIsoCode));
-				if (stringsFileAsset != null){
-					providedIsoCodes.Add( langIsoCode );
-				}
-			}
-		}
-
-		return providedIsoCodes;
 	}
 
 	public static string GetISOCodeFromSystemLanguage() {
@@ -230,4 +178,6 @@ public class StringResourceManager {
 
 		return code;
 	}
+}
+
 }
